@@ -1,24 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import PokemonList from './components/PokemonList';
+import axios from 'axios';
 
 function App() {
+  const [allPokemon, setAllPokemon] = useState([]);
+  const [fetched, setFetched] = useState(false);
+
+  useEffect(() => {
+    axios.get('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=807')
+      .then(response => setAllPokemon(response.data.results))
+      .catch(err => console.log(err))
+  }, []);
+
+  const showList = () => {
+    setFetched(true);
+    console.log(allPokemon);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App container">
+      <button className="btn btn-dark" onClick={showList}>Fetch Pokemon</button>
+      {fetched ? <PokemonList allPokemon={allPokemon}/> : ''}
     </div>
   );
 }
